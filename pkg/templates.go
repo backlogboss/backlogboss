@@ -81,7 +81,7 @@ const selectTaskDetails = `
 
 <green><bold> {{ .Title }} </bold></green>
 
- <bg-green> <darkgrey>{{ status .ID}}</darkgrey> </bg-green>   <bg-darkgrey> Updated: {{.UpdatedAt}} </bg-darkgrey>  <bg-darkgrey> Created: {{.CreatedAt}} </bg-darkgrey>
+ <bg-green> <darkgrey>{{ status .ID}}</darkgrey> </bg-green>  <bg-darkgrey> Score: {{.Score}} </bg-darkgrey>  <bg-darkgrey> Updated: {{.UpdatedAt}} </bg-darkgrey>  <bg-darkgrey> Created: {{.CreatedAt}} </bg-darkgrey>
 
  <bg-darkgrey> Description:</bg-darkgrey>
 

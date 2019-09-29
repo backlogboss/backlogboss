@@ -59,6 +59,7 @@ func syncTasks(db *storm.DB, token *TokenResponse, userID string) error {
 			if err != nil {
 				return err
 			}
+			continue
 		}
 		return nil
 	}
@@ -72,6 +73,7 @@ func syncTasks(db *storm.DB, token *TokenResponse, userID string) error {
 				if err != nil {
 					return err
 				}
+				continue
 			}
 			return err
 		}
@@ -82,12 +84,14 @@ func syncTasks(db *storm.DB, token *TokenResponse, userID string) error {
 			if err != nil {
 				return err
 			}
+			continue
 		} else if local.UpdatedAt.After(remote.UpdatedAt) {
 			// if local is newer
 			err = putTask(local, userID, token.AccessToken)
 			if err != nil {
 				return err
 			}
+			continue
 		}
 	}
 
@@ -99,6 +103,7 @@ func syncTasks(db *storm.DB, token *TokenResponse, userID string) error {
 			if err != nil {
 				return err
 			}
+			continue
 		}
 	}
 
@@ -202,6 +207,7 @@ func syncProjects(db *storm.DB, token *TokenResponse, userID string) error {
 			if err != nil {
 				return err
 			}
+			continue
 		}
 		return nil
 	}
@@ -215,6 +221,7 @@ func syncProjects(db *storm.DB, token *TokenResponse, userID string) error {
 				if err != nil {
 					return err
 				}
+				continue
 			}
 			return err
 		}
@@ -225,12 +232,14 @@ func syncProjects(db *storm.DB, token *TokenResponse, userID string) error {
 			if err != nil {
 				return err
 			}
+			continue
 		} else if local.UpdatedAt.After(remote.UpdatedAt) {
 			// if local is newer
 			err = putProject(local, userID, token.AccessToken)
 			if err != nil {
 				return err
 			}
+			continue
 		}
 	}
 

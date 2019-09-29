@@ -3,6 +3,7 @@ package pkg
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -65,6 +66,11 @@ func Log(filter TasksFilter) {
 		os.Exit(1)
 	}
 
+	// sort by score.
+	sort.Slice(tasks, func(i, j int) bool {
+		return tasks[i].Score > tasks[j].Score
+	})
+
 taskList:
 	selectTaskLabel := "Hit enter to edit, commit, swap or delete a task. Selection: "
 
@@ -101,6 +107,13 @@ taskList:
 		if err != nil {
 			os.Exit(1)
 		}
+	case Score:
+		err = promptUpdateScore(task)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
 	case Delete:
 		err = deleteSelectedTask(task)
 		if err != nil {

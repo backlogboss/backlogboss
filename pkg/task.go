@@ -3,6 +3,7 @@ package pkg
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -50,6 +51,7 @@ type Task struct {
 	Description   []byte     `json:"description"`
 	CommitMessage []byte     `json:"commit_message"`
 	Done          int        `json:"done"`
+	Score         int64      `json:"score"`
 	CreatedAt     time.Time  `storm:"index" json:"created_at"`
 	UpdatedAt     time.Time  `storm:"index" json:"updated_at"`
 	DeletedAt     *time.Time `json:"deleted_at"`
@@ -193,6 +195,38 @@ func updateCurrentTaskTitle(db *storm.DB, title string) error {
 		return errors.WithStack(err)
 	}
 	return nil
+}
+
+func promptUpdateScore(task Task) error {
+	label := fmt.Sprintf("Update task priority score(0-13). Current score is %v >", task.Score)
+	return updateScore(task, promptScoreInput(label))
+}
+
+func updateScore(task Task, score int64) error {
+	db := getConfDB()
+	defer db.Close()
+
+	tx, err := db.Begin(true)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	err = tx.UpdateField(&Task{ID: task.ID}, "Score", score)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	err = tx.UpdateField(&Task{ID: task.ID}, "UpdatedAt", time.Now())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return tx.Commit()
 }
 
 var errSelectCanceled = errors.New("prompt cancelled")
@@ -345,4 +379,35 @@ func promptSelectTask(label string, currentTaskID string, backlog []Task) (Task,
 	}
 
 	return tasks[i], nil
+}
+
+func promptScoreInput(label string) int64 {
+	validate := func(input string) error {
+		val, err := strconv.ParseInt(input, 10, 32)
+		if err != nil {
+			return errors.New("Must be an integer")
+		}
+		if val < 0 || val > 13 {
+			return errors.New("Must be an integer between 0 & 13")
+		}
+		return nil
+	}
+
+	prompt := promptui.Prompt{
+		Label:    label,
+		Validate: validate,
+	}
+
+	result, err := prompt.Run()
+
+	if err != nil {
+		return 0
+	}
+
+	num, err := strconv.ParseInt(result, 10, 32)
+	if err != nil {
+		return 0
+	}
+
+	return num
 }

@@ -2,7 +2,6 @@ package pkg
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/manifoldco/promptui"
@@ -14,37 +13,16 @@ const (
 	Edit TaskAction = iota
 	Commit
 	Swap
+	Score
 	Delete
 	Cancel
 )
 
 var (
 	openTaskActions   = []TaskAction{Edit, Commit}
-	queuedTaskActions = []TaskAction{Edit, Swap, Delete}
+	queuedTaskActions = []TaskAction{Edit, Swap, Score, Delete}
 	doneTaskActions   = []TaskAction{Edit}
 )
-
-func _() {
-	// An "invalid array index" compiler error signifies that the constant values have changed.
-	// Re-run the stringer command to generate them again.
-	var x [1]struct{}
-	_ = x[Edit-0]
-	_ = x[Commit-1]
-	_ = x[Swap-2]
-	_ = x[Delete-3]
-	_ = x[Cancel-4]
-}
-
-const _TaskAction_name = "EditCommitSwapDeleteCancel"
-
-var _TaskAction_index = [...]uint8{0, 4, 10, 14, 20, 26}
-
-func (i TaskAction) String() string {
-	if i < 0 || i >= TaskAction(len(_TaskAction_index)-1) {
-		return "TaskAction(" + strconv.FormatInt(int64(i), 10) + ")"
-	}
-	return _TaskAction_name[_TaskAction_index[i]:_TaskAction_index[i+1]]
-}
 
 func promptTaskMenu(actions []TaskAction) TaskAction {
 	action := Cancel
